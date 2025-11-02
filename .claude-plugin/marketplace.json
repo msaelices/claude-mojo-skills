@@ -1,0 +1,20 @@
+{
+  "name": "mojo-development-skills",
+  "owner": {
+    "name": "Mojo Skills Maintainer",
+    "email": "maintainer@example.com"
+  },
+  "metadata": {
+    "description": "Claude Code skills for Mojo development, including GPU kernel development, version migration, and performance optimization",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "mojo-skills",
+      "description": "Comprehensive collection of Mojo development skills covering GPU/hardware programming, version migration, code quality patterns, and development tooling",
+      "source": "./",
+      "strict": false,
+      "skills": []
+    }
+  ]
+}
