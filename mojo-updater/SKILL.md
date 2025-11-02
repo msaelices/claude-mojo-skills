@@ -9,6 +9,54 @@ This skill guides you through updating Mojo code to newer versions using a syste
 
 ## Update Workflow
 
+### Phase 0: Git Branch Setup
+
+**0.1 Check Git Status**
+
+Ensure working directory is clean before starting:
+
+```bash
+# Check git status
+git status
+
+# Verify no uncommitted changes
+git diff --exit-code && git diff --cached --exit-code
+```
+
+If there are uncommitted changes, ask user whether to:
+- Commit them first
+- Stash them
+- Abort the update
+
+**0.2 Create Update Branch**
+
+Create a dedicated branch for the version update:
+
+```bash
+# Get current branch name
+git branch --show-current
+
+# Create and checkout new branch (use target version in name)
+git checkout -b update/mojo-0.25.6
+
+# Or for nightly versions
+git checkout -b update/mojo-0.25.7-nightly
+```
+
+**Branch naming convention:**
+- `update/mojo-{version}` - For stable releases (e.g., `update/mojo-0.25.6`)
+- `update/mojo-{version}-nightly` - For nightly/dev releases
+- `update/mojo-latest` - When updating to latest without specific version
+
+**0.3 Document Starting Point**
+
+```bash
+# Record the commit hash before starting
+git rev-parse HEAD > .mojo-update-base-commit
+```
+
+This allows easy rollback if needed.
+
 ### Phase 1: Pre-Update Assessment
 
 **1.1 Identify Current and Target Versions**
@@ -370,6 +418,154 @@ for i in {1..3}; do mojo run test_*.mojo; done
 mojo build main.mojo
 ```
 
+### Phase 6: Finalize and Merge
+
+**6.1 Commit All Changes**
+
+Create clear, organized commits for the migration:
+
+```bash
+# Review all changes
+git status
+git diff
+
+# Stage dependency updates
+git add pixi.toml pixi.lock
+git commit -m "Update Mojo dependency to 0.25.6"
+
+# Stage code fixes (or commit incrementally during Phase 3/4)
+git add .
+git commit -m "Fix code for Mojo 0.25.6 compatibility
+
+- Remove @value decorators
+- Update sizeof → size_of
+- Add ImplicitlyCopyable traits
+- Update owned → deinit in destructors
+- Add explicit Int/UInt conversions
+"
+
+# Or if changes were committed incrementally, ensure all are committed
+git status  # Should show clean working tree
+```
+
+**6.2 Review Commit History**
+
+```bash
+# View commits made in this branch
+git log origin/main..HEAD --oneline
+
+# Review full diff from main
+git diff origin/main
+```
+
+**6.3 Push Branch**
+
+```bash
+# Push update branch to remote
+git push -u origin update/mojo-0.25.6
+```
+
+**6.4 Create Pull Request (Optional)**
+
+If working in a team or want code review:
+
+```bash
+# Create PR using gh CLI
+gh pr create \
+  --title "Update to Mojo 0.25.6" \
+  --body "## Summary
+Updates project to Mojo 0.25.6.
+
+## Changes
+- Updated dependencies in pixi.toml
+- Removed @value decorators
+- Renamed sizeof → size_of
+- Added ImplicitlyCopyable traits where needed
+- Updated destructors to use deinit convention
+- Made Int/UInt conversions explicit
+
+## Testing
+- ✅ All tests passing
+- ✅ Code builds successfully
+- ✅ No deprecation warnings
+
+## Migration Guide
+Based on [Mojo 0.25.6 changelog](https://github.com/modular/modular/blob/main/mojo/docs/changelog-released.md)
+"
+```
+
+Or create PR via web interface using the pushed branch.
+
+**6.5 Merge to Main**
+
+After review (or if working solo):
+
+```bash
+# Switch back to main
+git checkout main
+
+# Merge update branch (use --no-ff for clear history)
+git merge --no-ff update/mojo-0.25.6 -m "Merge Mojo 0.25.6 update"
+
+# Push to main
+git push origin main
+
+# Clean up update branch
+git branch -d update/mojo-0.25.6
+git push origin --delete update/mojo-0.25.6
+```
+
+Or merge via PR if created in step 6.4.
+
+**6.6 Clean Up**
+
+```bash
+# Remove temporary files
+rm .mojo-update-base-commit
+
+# Tag the update if desired
+git tag mojo-0.25.6
+git push --tags
+```
+
+### Rollback Procedure (If Update Fails)
+
+If the update encounters insurmountable issues:
+
+**Option 1: Reset to base commit**
+```bash
+# Get the starting commit
+BASE_COMMIT=$(cat .mojo-update-base-commit)
+
+# Hard reset to before update
+git reset --hard $BASE_COMMIT
+
+# Delete update branch
+git checkout main
+git branch -D update/mojo-0.25.6
+```
+
+**Option 2: Revert changes while keeping branch**
+```bash
+# Revert all commits in the branch
+git revert HEAD~n..HEAD  # n = number of commits
+
+# Or reset and re-attempt
+git reset --hard origin/main
+```
+
+**Option 3: Abandon and start fresh**
+```bash
+# Switch to main
+git checkout main
+
+# Delete update branch
+git branch -D update/mojo-0.25.6
+
+# Start over with new approach
+git checkout -b update/mojo-0.25.6-v2
+```
+
 ## Common Migration Patterns by Version
 
 ### v24.x → v25.6
@@ -441,14 +637,18 @@ When reading the changelog:
 
 ## Best Practices
 
-1. **Always start with tests passing** - Establish baseline
-2. **Update dependencies first** - See what breaks
-3. **Fix one pattern at a time** - Easier to track
-4. **Run tests frequently** - Fast feedback loop
-5. **Document each change** - Helps with future migrations
-6. **Keep changelog open** - Reference during fixes
-7. **Use version control** - Commit after each successful pattern fix
-8. **Test incrementally** - Don't wait until all changes are done
+1. **Create a dedicated branch** - Always use a separate branch for updates (`update/mojo-{version}`)
+2. **Check for clean state** - Ensure no uncommitted changes before starting
+3. **Always start with tests passing** - Establish baseline before any changes
+4. **Update dependencies first** - See what breaks, commit separately
+5. **Fix one pattern at a time** - Easier to track and debug
+6. **Run tests frequently** - Fast feedback loop after each fix
+7. **Commit incrementally** - Commit after each successful pattern fix or logical group
+8. **Document each change** - Clear commit messages help with future migrations
+9. **Keep changelog open** - Reference during fixes
+10. **Test incrementally** - Don't wait until all changes are done
+11. **Create PR for review** - Even solo developers benefit from structured review
+12. **Tag releases** - Tag successful migrations for easy reference
 
 ## Resources
 
@@ -460,6 +660,12 @@ When reading the changelog:
 ## Example Update Session
 
 ```bash
+# 0. Check git status and create branch
+git status
+git diff --exit-code && git diff --cached --exit-code
+git checkout -b update/mojo-0.25.6
+git rev-parse HEAD > .mojo-update-base-commit
+
 # 1. Fetch changelog
 gh api repos/modular/modular/contents/mojo/docs/changelog-released.md --jq '.content' | base64 -d > changelog.txt
 
@@ -469,9 +675,11 @@ mojo --version
 # 3. Run tests (baseline)
 mojo run test_*.mojo
 
-# 4. Update dependencies
+# 4. Update dependencies and commit
 # Edit pixi.toml: mojo = "0.25.6"
 pixi install
+git add pixi.toml pixi.lock
+git commit -m "Update Mojo dependency to 0.25.6"
 
 # 5. Run tests (identify failures)
 mojo run test_*.mojo
@@ -485,9 +693,29 @@ mojo run test_*.mojo
 # 7. Verify all tests pass
 mojo run test_*.mojo
 
-# 8. Commit changes
-git add -A
-git commit -m "Update to Mojo 0.25.6"
+# 8. Commit code changes
+git add .
+git commit -m "Fix code for Mojo 0.25.6 compatibility
+
+- Remove @value decorators
+- Update sizeof → size_of
+- Add ImplicitlyCopyable traits
+- Update owned → deinit in destructors
+"
+
+# 9. Push branch and create PR
+git push -u origin update/mojo-0.25.6
+gh pr create --title "Update to Mojo 0.25.6" --body "..."
+
+# 10. After review, merge to main
+git checkout main
+git merge --no-ff update/mojo-0.25.6
+git push origin main
+
+# 11. Clean up
+git branch -d update/mojo-0.25.6
+git push origin --delete update/mojo-0.25.6
+rm .mojo-update-base-commit
 ```
 
 ## Quick Reference: Common Fixes
