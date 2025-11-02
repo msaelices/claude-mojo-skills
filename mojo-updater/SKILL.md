@@ -24,6 +24,8 @@ mojo --version
 
 Ask user for target version if not specified, or default to latest stable.
 
+Ask for user approval to proceed with update, mentioning the detected current and the target versions and high-level approach.
+
 **1.2 Fetch and Analyze Changelog**
 
 Use `gh` tool to fetch relevant changelog sections:
