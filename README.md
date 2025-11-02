@@ -26,29 +26,17 @@ Each skill is self-contained in its own directory with a `SKILL.md` file contain
 
 **These skills are provided for educational and development purposes.** Mojo is a rapidly evolving language, and syntax, APIs, and best practices may change between versions. Always verify against the [official Mojo documentation](https://docs.modular.com/mojo/) and test thoroughly. The implementations shown here reflect current understanding but may need adaptation as the language evolves.
 
-# Example Skills
+# Available Skills
 
-This repository will include skills demonstrating different aspects of Mojo development:
+This repository currently includes the following Mojo development skills:
 
-## GPU & Hardware Programming
-- **gpu-kernel-development** - Write high-performance GPU kernels using Mojo's SIMD types, parallel primitives, and memory management
-- **simd-optimization** - Optimize code using SIMD vectors and vectorization strategies
-- **hardware-intrinsics** - Work with low-level hardware features and intrinsics
+## mojo-kernels - GPU Kernel Development
 
-## Version Migration & Compatibility
-- **version-migration** - Migrate Mojo code between versions, handling breaking changes and deprecated APIs
-- **api-compatibility** - Check compatibility across Mojo versions and suggest modern alternatives
-- **migration-patterns** - Common patterns for refactoring code to use newer Mojo features
+Write high-performance GPU kernels in Mojo using the MAX framework. This skill provides:
 
-## Code Quality & Patterns
-- **mojo-best-practices** - Apply Mojo-specific best practices for performance, safety, and maintainability
-- **python-interop** - Integrate Python libraries and migrate Python code to Mojo
-- **type-system-guide** - Use Mojo's advanced type system including parametric types and traits
+## mojo-updater - Version Migration Tool
 
-## Development & Tooling
-- **performance-analysis** - Profile and optimize Mojo code for maximum performance
-- **testing-mojo** - Write tests for Mojo code using current testing approaches
-- **debugging-guide** - Debug Mojo programs and understand common error patterns
+Systematically update Mojo code to newer versions using a test-driven approach. This skill provides:
 
 # Using These Skills
 
@@ -59,11 +47,14 @@ To use a skill from this repository in Claude Code:
 1. Clone this repository locally or download specific skill folders
 2. Copy the skill folder to your Claude Code skills directory:
    ```bash
-   cp -r /path/to/claude-mojo-skills/skill-name ~/.claude/skills/
+   cp -r /path/to/claude-mojo-skills/mojo-kernels ~/.claude/skills/
+   cp -r /path/to/claude-mojo-skills/mojo-updater ~/.claude/skills/
    ```
-3. Use the skill by mentioning it in conversation: "Use the gpu-kernel-development skill to help me write a matrix multiplication kernel"
+3. Use the skill by mentioning it in conversation:
+   - "Use the mojo-kernels skill to help me write a matrix multiplication kernel"
+   - "Use the mojo-updater skill to update my code to Mojo 0.25.6"
 
-Alternatively, if this repository becomes available as a Claude Code plugin marketplace:
+To install directly from the plugin marketplace, run the following commands in Claude Code:
 ```
 /plugin marketplace add msaelices/claude-mojo-skills
 /plugin install mojo-skills
