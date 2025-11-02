@@ -62,27 +62,7 @@ To install directly from the plugin marketplace, run the following commands in C
 
 Note: As per [this issue](https://github.com/anthropics/claude-code/issues/10568) in Claude Code, there is a known bug where custom marketplace skills may not appear correctly. 
 
-To work around this, until the issue is fixed by Anthropic, please paste the following prompt in Claude Code:
-
-```
-I need you to apply a workaround for the marketplace skills visibility bug (GitHub issue #10568).
-
-Please do the following:
-
-1. Find all custom (non-Anthropic) marketplaces in ~/.claude/plugins/marketplaces/
-
-2. For each custom marketplace, scan the marketplace.json to find all skills (look for "plugins" entries with "source" fields pointing to skill directories)
-
-3. Backup ~/.claude/plugins/marketplaces/anthropic-agent-skills/.claude-plugin/marketplace.json
-
-4. Edit that file and add relative path references to ALL discovered custom skills in the "example-skills" plugin's "skills" array using the format: "../marketplace-name/path/to/skill"
-
-5. Verify the JSON syntax is valid
-
-6. Show me which skills were added and tell me to restart Claude Code
-
-This is a temporary workaround until Anthropic fixes the hardcoded marketplace filtering bug.
-```
+To work around this, until the issue is fixed by Anthropic, manually copy or symlink the skill folders into your local Claude Code skills directory as described above.
 
 Then restart Claude Code to apply the changes.
 
