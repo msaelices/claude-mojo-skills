@@ -163,12 +163,15 @@ struct Point:
     var y: Float64
 
 # AFTER (v25.6+)
+@fieldwise_init
 struct Point:
     var x: Float64
     var y: Float64
 ```
 
-**Pattern:** Remove `@value` decorator (removed in v25.6)
+**Pattern:** Rename `@value` decorator to `@fieldwise_init`
+
+Maybe we also need to add `ImplicitlyCopyable` trait if applicable.
 
 **3.2 Rename: `sizeof` → `size_of`**
 
