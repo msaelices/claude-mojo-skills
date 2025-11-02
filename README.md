@@ -65,7 +65,7 @@ To use a skill from this repository in Claude Code:
 
 Alternatively, if this repository becomes available as a Claude Code plugin marketplace:
 ```
-/plugin marketplace add your-username/claude-mojo-skills
+/plugin marketplace add msaelices/claude-mojo-skills
 /plugin install mojo-skills
 ```
 
@@ -77,61 +77,7 @@ Follow the instructions in [Using skills in Claude](https://support.claude.com/e
 
 You can upload custom skills via the Claude API. See the [Skills API Quickstart](https://docs.claude.com/en/api/skills-guide#creating-a-skill) for more information.
 
-# Creating a Mojo Skill
-
-Skills are simple to create - just a folder with a `SKILL.md` file containing YAML frontmatter and instructions:
-
-```markdown
----
-name: my-mojo-skill
-description: A clear description of what this skill does for Mojo development
----
-
-# My Mojo Skill
-
-[Add your Mojo-specific instructions here that Claude will follow when this skill is active]
-
-## Key Mojo Concepts
-- Concept 1 (e.g., ownership and lifetimes)
-- Concept 2 (e.g., parametric types)
-
-## Common Patterns
-- Pattern 1 with code example
-- Pattern 2 with code example
-
-## Version-Specific Notes
-- Note any version-specific behaviors or breaking changes
-
-## Resources
-- Links to relevant Mojo documentation
-```
-
-The frontmatter requires only two fields:
-- `name` - A unique identifier for your skill (lowercase, hyphens for spaces)
-- `description` - A complete description of what the skill does and when to use it
-
-For more details, see [How to create custom skills](https://support.claude.com/en/articles/12512198-creating-custom-skills).
-
-# Contributing
-
-Contributions are welcome! If you've created a useful Mojo skill or have improvements to existing ones:
-
-1. Ensure your skill includes clear instructions and examples
-2. Test the skill with current Mojo versions
-3. Document any version-specific behavior
-4. Submit a pull request with a description of what the skill does
-
-# Resources
-
-- [Mojo Official Documentation](https://docs.modular.com/mojo/)
-- [Mojo GitHub Repository](https://github.com/modularml/mojo)
-- [Modular Developer Community](https://www.modular.com/community)
-- [Claude Code Documentation](https://docs.claude.com/claude-code)
-
 # License
 
-This repository is open source under the Apache 2.0 license. See [LICENSE](LICENSE) for details.
+This repository is open source under the MIT license. See [LICENSE](LICENSE) for details.
 
----
-
-**About Mojo**: Mojo is a programming language designed for AI infrastructure, combining Python's ease of use with C-level performance and low-level control. It's developed by Modular and is actively evolving with frequent updates and improvements.
