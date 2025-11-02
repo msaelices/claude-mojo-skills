@@ -15,7 +15,8 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./mojo-kernels"
+        "./mojo-kernels",
+        "./mojo-updater"
       ]
     }
   ]
