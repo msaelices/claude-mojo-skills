@@ -7,6 +7,23 @@ description: Guide for writing high-performance GPU kernels in Mojo using the MA
 
 This skill guides you in writing efficient GPU kernels in Mojo using Modular's MAX framework. Use when implementing custom GPU operations, optimizing compute-intensive workloads, or working with SIMD and parallel algorithms.
 
+## Available Resources
+
+This skill includes ready-to-use templates and detailed references:
+
+**Templates** (`assets/`):
+- `elementwise_template.mojo` - Complete element-wise operation template
+- `reduction_template.mojo` - Reduction kernel templates (warp, block, SIMD)
+- `activation_templates.mojo` - Common activation functions (ReLU, GELU, SiLU, etc.)
+
+**References** (`references/`):
+- `elementwise_patterns.md` - Detailed element-wise kernel patterns
+- `reduction_patterns.md` - Comprehensive reduction strategies
+- `shared_memory_patterns.md` - Shared memory usage patterns
+- `max_operations.md` - Catalog of available MAX operations
+
+Use these templates as starting points and consult references for detailed explanations.
+
 ## Core Concepts
 
 ### MAX GPU Kernel Architecture
@@ -32,6 +49,8 @@ from max.math import exp, log, sqrt, tanh, ceildiv
 ### Pattern 1: Element-wise Operations
 
 **Use case**: Operations processing each element independently (activations, arithmetic)
+
+**Resources**: See `assets/elementwise_template.mojo` for a complete template and `references/elementwise_patterns.md` for detailed patterns including vectorization.
 
 **Structure**:
 ```mojo
@@ -61,6 +80,8 @@ ctx.enqueue_function_checked[elementwise_kernel, dtype](
 
 **Use case**: Fast reductions within a warp (32 threads)
 
+**Resources**: See `assets/reduction_template.mojo` for complete examples and `references/reduction_patterns.md` for all reduction strategies.
+
 **Available operations**: `warp.sum()`, `warp.max()`, `warp.min()`, `warp.broadcast()`, `warp.shuffle()`
 
 **Example**:
@@ -84,6 +105,8 @@ fn warp_reduce_kernel[dtype: DType](
 ### Pattern 3: Block-level Reduction with Shared Memory
 
 **Use case**: Reductions across entire thread block (up to 1024 threads)
+
+**Resources**: See `assets/reduction_template.mojo` and `references/reduction_patterns.md` for comprehensive examples.
 
 **Key points**:
 - Use `stack_allocation[dtype, size, AddressSpace.SHARED]()`
@@ -125,6 +148,8 @@ fn block_reduce_kernel[dtype: DType, block_size: Int](
 ### Pattern 4: Shared Memory for Data Reuse
 
 **Use case**: Operations with neighbor access (convolution, stencil operations)
+
+**Resources**: See `references/shared_memory_patterns.md` for detailed patterns including 2D tiling, halo regions, and bank conflict avoidance.
 
 **Example** (1D stencil):
 ```mojo
@@ -219,6 +244,8 @@ var int_vec = vec.cast[DType.int32]()
 
 ## Common Activation Functions
 
+**Resources**: See `assets/activation_templates.mojo` for a complete collection of optimized activation functions.
+
 Efficient implementations using `@always_inline`:
 
 ```mojo
@@ -263,6 +290,8 @@ fn silu[dtype: DType](x: SIMD[dtype, 1]) -> SIMD[dtype, 1]:
 - Solution: Pad shared arrays by 1-2 elements
 
 ## High-Level MAX Patterns
+
+**Resources**: See `references/max_operations.md` for a comprehensive catalog of available MAX operations organized by category.
 
 MAX provides optimized pattern generators:
 
@@ -330,6 +359,16 @@ barrier()             # Block-level synchronization
 
 ## Resources
 
+**Included with this skill:**
+- `assets/elementwise_template.mojo` - Element-wise operation template
+- `assets/reduction_template.mojo` - Reduction kernel templates
+- `assets/activation_templates.mojo` - Activation function implementations
+- `references/elementwise_patterns.md` - Element-wise kernel patterns
+- `references/reduction_patterns.md` - Reduction strategies
+- `references/shared_memory_patterns.md` - Shared memory patterns
+- `references/max_operations.md` - MAX operations catalog
+
+**External documentation:**
 - [MAX Documentation](https://docs.modular.com/max/)
 - [Mojo Programming Manual](https://docs.modular.com/mojo/)
 - [MAX GPU API Reference](https://docs.modular.com/max/api/python/max/gpu/)
