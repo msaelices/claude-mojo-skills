@@ -14,7 +14,9 @@
       "description": "Comprehensive collection of Mojo development skills covering GPU/hardware programming, version migration, code quality patterns, and development tooling",
       "source": "./",
       "strict": false,
-      "skills": []
+      "skills": [
+        "./mojo-kernels"
+      ]
     }
   ]
 }
